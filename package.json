@@ -1,0 +1,19 @@
+{
+  "name": "small-biz-app",
+  "version": "1.0.0",
+  "description": "Small business inventory, scheduling and task manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Daniel Bailey",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^34.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0"
+  }
+}
