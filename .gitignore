@@ -1,0 +1,4 @@
+node_modules/
+database/smallbiz.db
+.DS_Store
+*.log
