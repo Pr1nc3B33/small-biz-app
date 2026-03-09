@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Small Biz App — Dashboard</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>🏪 Small Biz App</h2>
+      <p id="currentDate"></p>
+    </div>
+
+    <a href="dashboard.html" class="nav-item active">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="employees.html" class="nav-item">
+      <span class="nav-icon">👥</span> Employees
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <span class="nav-icon">📦</span> Inventory
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <span class="nav-icon">🗓️</span> Schedule
+    </a>
+    <a href="tasks.html" class="nav-item">
+      <span class="nav-icon">✅</span> Tasks
+    </a>
+
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        Signed in as <span id="usernameDisplay"></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────── -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p>Here's what's happening today</p>
+    </div>
+
+    <div class="grid-2">
+
+      <!-- TODAY'S SCHEDULE -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📅 Today's Schedule</span>
+          <span class="badge badge-blue" id="todayCount">0 shifts</span>
+        </div>
+        <div id="todaySchedule">
+          <div class="empty-state">No shifts scheduled for today</div>
+        </div>
+      </div>
+
+      <!-- TOMORROW'S SCHEDULE -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📆 Tomorrow's Schedule</span>
+          <span class="badge badge-gray" id="tomorrowCount">0 shifts</span>
+        </div>
+        <div id="tomorrowSchedule">
+          <div class="empty-state">No shifts scheduled for tomorrow</div>
+        </div>
+      </div>
+
+      <!-- INVENTORY ALERTS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📦 Inventory Alerts</span>
+          <span class="badge badge-red" id="alertCount">0 alerts</span>
+        </div>
+        <div id="inventoryAlerts">
+          <div class="empty-state">No inventory alerts</div>
+        </div>
+      </div>
+
+      <!-- MANAGER NOTES & MEETINGS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📌 Notes & Meetings</span>
+          <button id="addNoteBtn" style="
+            background: #3B82F6;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+          ">+ Add</button>
+        </div>
+        <div id="managerNotes">
+          <div class="empty-state">No notes or meetings</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -122,6 +122,87 @@ ipcMain.handle('auth:add-manager', async (event, { username, password }) => {
   }
 });
 
+// ── DASHBOARD HANDLERS ────────────────────────────────
+
+ipcMain.handle('dashboard:today-schedule', () => {
+  const today = new Date().toISOString().split('T')[0];
+  const result = db.exec(`
+    SELECT s.*, e.first_name, e.last_name,
+      GROUP_CONCAT(t.title, '||') as tasks
+    FROM shifts s
+    JOIN employees e ON s.employee_id = e.id
+    LEFT JOIN tasks t ON t.assigned_to = e.id
+      AND t.due_date = ? AND t.status != 'Done'
+    WHERE s.date = ?
+    GROUP BY s.id
+    ORDER BY s.start_time
+  `, [today, today]);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('dashboard:tomorrow-schedule', () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const date = tomorrow.toISOString().split('T')[0];
+
+  const result = db.exec(`
+    SELECT s.*, e.first_name, e.last_name
+    FROM shifts s
+    JOIN employees e ON s.employee_id = e.id
+    WHERE s.date = ?
+    ORDER BY s.start_time
+  `, [date]);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('dashboard:inventory-alerts', () => {
+  const result = db.exec(`
+    SELECT id, name, quantity, low_stock_alert
+    FROM products
+    WHERE quantity <= low_stock_alert
+    ORDER BY quantity ASC
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('dashboard:manager-notes', () => {
+  const result = db.exec(`
+    SELECT id, type, title, body, pinned, meeting_at
+    FROM manager_notes
+    ORDER BY pinned DESC, created_at DESC
+    LIMIT 10
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
 // ── APP SETUP ─────────────────────────────────────────
 async function createWindow() {
   const result = await initDatabase();
