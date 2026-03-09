@@ -11,9 +11,10 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^34.0.0"
+    "electron": "^40.8.0"
   },
   "dependencies": {
-    "better-sqlite3": "^11.0.0"
+    "bcryptjs": "^3.0.2",
+    "sql.js": "^1.14.1"
   }
 }

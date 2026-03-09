@@ -23,3 +23,17 @@ Manager can create, rename, and delete custom positions
 from a settings panel. Color picker per position.
 **Status:** Backlog
 
+## Security
+### SEC-01 — Electron ASAR Integrity
+Moderate vulnerability in Electron <35.7.5. 
+Not exploitable in local dev. Revisit when packaging 
+app for distribution. Check for Electron update at that time.
+**Status:** Backlog — revisit at distribution stage
+
+### SEC-02 — electron-rebuild audit warnings
+8 vulnerabilities in electron-rebuild build tools
+(tar, node-gyp, cacache, http-proxy-agent).
+Build-time only — not exploitable at runtime.
+Monitor for electron-rebuild update that resolves internally.
+Do NOT run npm audit fix --force — would downgrade to v2.0.3.
+**Status:** Backlog — monitor only

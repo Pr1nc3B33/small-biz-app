@@ -1,26 +1,32 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+const initDatabase = require('./schema');
 
-require('./schema'); // runs schema file on startup creates all 5 tables if they dont exist
+let mainWindow;
+let database;
 
-function createWindow() {    // Create the browser window.
-  const win = new BrowserWindow({
+async function createWindow() {
+  // Initialize database first
+  const { db, saveDb } = await initDatabase();
+  database = { db, saveDb };
+
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    webPreferences: {    // these two settings let your HTML/JS files talk directly to Node.js and your database.
+    webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    titleBarStyle: 'hiddenInset', //gives it that clean Mac look where the traffic light buttons float over your content instead of sitting in a grey bar
+    titleBarStyle: 'hiddenInset',
     title: 'Small Biz App',
   });
 
-  win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 }
 
-app.whenReady().then(() => { //Electron is async, so you have to wait for it to be ready before creating a window. This is the Electron equivalent of document.addEventListener('DOMContentLoaded')
+app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {
@@ -28,6 +34,6 @@ app.whenReady().then(() => { //Electron is async, so you have to wait for it to 
   });
 });
 
-app.on('window-all-closed', () => { //on Mac, apps don't quit when you close the window — they stay in the dock. This block handles that Mac-specific behavior correctly.
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
