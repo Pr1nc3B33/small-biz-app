@@ -50,7 +50,8 @@ loginBtn.addEventListener('click', async () => {
   }
 
   // Login worked — log the user for now
-  console.log('Logged in as:', result.user);
+  localStorage.setItem('currentUser', JSON.stringify(result.user));
+window.location.href = 'dashboard.html';
 });
 
 // Handle "Create manager account" link click

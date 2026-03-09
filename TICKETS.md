@@ -37,3 +37,11 @@ Build-time only — not exploitable at runtime.
 Monitor for electron-rebuild update that resolves internally.
 Do NOT run npm audit fix --force — would downgrade to v2.0.3.
 **Status:** Backlog — monitor only
+
+### E-03 — Add/Remove Manager Accounts
+From inside the app, an existing manager can:
+- Add a second manager account (max 2 total)
+- Remove a manager account
+- Reset a manager password
+Located in: Settings or Employee Management screen
+**Status:** Backlog

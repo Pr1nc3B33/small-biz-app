@@ -62,17 +62,21 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
   };
 });
 
-// SETUP: Create the first manager account
+// SETUP: Create first manager account (login screen only)
 ipcMain.handle('auth:create-manager', async (event, { username, password }) => {
-  // Check if manager already exists
   const existing = db.exec(
-    `SELECT id FROM users WHERE role = 'manager' LIMIT 1`
+    `SELECT COUNT(*) as count FROM users WHERE role = 'manager'`
   );
-  if (existing.length > 0 && existing[0].values.length > 0) {
-    return { success: false, message: 'A manager account already exists' };
+
+  const managerCount = existing[0].values[0][0];
+
+  if (managerCount >= 1) {
+    return {
+      success: false,
+      message: 'A manager account already exists. Sign in or ask your manager to add you from inside the app.'
+    };
   }
 
-  // Hash the password — never store plain text
   const password_hash = await bcrypt.hash(password, 12);
 
   try {
@@ -88,9 +92,38 @@ ipcMain.handle('auth:create-manager', async (event, { username, password }) => {
   }
 });
 
+// ADD MANAGER: Called from inside the app by an existing manager (max 2)
+ipcMain.handle('auth:add-manager', async (event, { username, password }) => {
+  const existing = db.exec(
+    `SELECT COUNT(*) as count FROM users WHERE role = 'manager'`
+  );
+
+  const managerCount = existing[0].values[0][0];
+
+  if (managerCount >= 2) {
+    return {
+      success: false,
+      message: 'Maximum of 2 manager accounts reached. Remove a manager before adding a new one.'
+    };
+  }
+
+  const password_hash = await bcrypt.hash(password, 12);
+
+  try {
+    db.run(
+      `INSERT INTO users (username, password_hash, role, is_first_login)
+       VALUES (?, ?, 'manager', 1)`,
+      [username, password_hash]
+    );
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: 'Username already taken' };
+  }
+});
+
 // ── APP SETUP ─────────────────────────────────────────
 async function createWindow() {
-  // Initialize database first
   const result = await initDatabase();
   db = result.db;
   saveDb = result.saveDb;
