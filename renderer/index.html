@@ -1,27 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Small Biz App</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-        background: #0F1117;
-        color: #E2E8F0;
-        font-family: -apple-system, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        gap: 12px;
-      }
-      h1 { font-size: 32px; }
-      p  { color: #64748B; font-size: 16px; }
-    </style>
-  </head>
-  <body>
-    <h1>🏪 Small Biz App</h1>
-    <p>Database connected. Ready to build.</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Small Biz App — Login</title>
+  <link rel="stylesheet" href="css/login.css" />
+</head>
+<body>
+  <div class="login-box">
+    <div class="logo">
+      <h1>🏪 Small Biz App</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input 
+        type="text" 
+        id="username" 
+        placeholder="Enter your username"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input 
+        type="password" 
+        id="password" 
+        placeholder="Enter your password"
+      />
+    </div>
+
+    <button id="loginBtn">Sign In</button>
+
+    <div class="setup-link">
+      First time? <a id="setupLink">Create manager account</a>
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
 </html>

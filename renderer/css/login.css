@@ -1,0 +1,115 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0F1117;
+  color: #E2E8F0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-box {
+  background: #1A1F2E;
+  border: 1px solid #2D3748;
+  border-radius: 16px;
+  padding: 48px;
+  width: 400px;
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo h1 {
+  font-size: 28px;
+  color: #F1F5F9;
+  margin-bottom: 4px;
+}
+
+.logo p {
+  color: #64748B;
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94A3B8;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input {
+  width: 100%;
+  background: #0F1117;
+  border: 1px solid #2D3748;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #F1F5F9;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #3B82F6;
+}
+
+button {
+  width: 100%;
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #2563EB;
+}
+
+.error {
+  background: #450A0A;
+  border: 1px solid #991B1B;
+  color: #FCA5A5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.setup-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #64748B;
+}
+
+.setup-link a {
+  color: #3B82F6;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.setup-link a:hover {
+  text-decoration: underline;
+}
+
+h1 + p {
+  margin-top: 16px;
+}
