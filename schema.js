@@ -3,6 +3,28 @@ const path = require('path');
 
 const db = new Database(path.join(__dirname, 'database', 'smallbiz.db'));
 db.pragma('journal_mode = WAL');
+db.exec(`
+    CREATE TABLE IF NOT EXISTS positions (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        title       TEXT NOT NULL UNIQUE,
+        color       TEXT DEFAULT '#64748B',
+        created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+`);
+const defaultPositions = [
+    'Manager',
+    'Shift Leader',
+    'Team Leader',
+    'Cashier',
+    'Customer Service'
+];
+
+const insertPosition = db.prepare(`
+    INSERT OR IGNORE INTO positions (title) VALUES (?)
+`);
+
+defaultPositions.forEach(title => insertPosition.run(title));
+
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS products (
@@ -27,7 +49,7 @@ db.exec(`
         id              INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name      TEXT NOT NULL,
         last_name       TEXT NOT NULL,
-        role            TEXT,
+        position_id     INTEGER,
         email           TEXT UNIQUE,
         phone           TEXT,
         hire_date       DATE,
@@ -35,7 +57,8 @@ db.exec(`
         status          TEXT DEFAULT 'Active',
         notes           TEXT,
         created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+        updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (position_id) REFERENCES positions(id)
     )
 `);
 
@@ -46,6 +69,8 @@ db.exec(`
         date            DATE NOT NULL,
         start_time      TIME NOT NULL,
         end_time        TIME NOT NULL,
+        actual_start    TIME,
+        actual_end      TIME,
         position        TEXT,
         status          TEXT DEFAULT 'Scheduled',
         notes           TEXT,
@@ -88,6 +113,6 @@ db.exec(`
     )
 `);
 
-console.log('✅ Database and all 5 tables created successfully!');
+console.log('✅ Database and all 6 tables created successfully!');
 
 module.exports = db;
