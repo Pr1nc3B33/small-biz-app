@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Small Biz App — Employees</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/employees.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>🏪 Small Biz App</h2>
+      <p id="currentDate"></p>
+    </div>
+
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="employees.html" class="nav-item active">
+      <span class="nav-icon">👥</span> Employees
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <span class="nav-icon">📦</span> Inventory
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <span class="nav-icon">🗓️</span> Schedule
+    </a>
+    <a href="tasks.html" class="nav-item">
+      <span class="nav-icon">✅</span> Tasks
+    </a>
+
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        Signed in as <span id="usernameDisplay"></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────── -->
+  <div class="main-content">
+    <div class="page-header">
+      <h1>Employees</h1>
+      <p>Manage your team by position</p>
+    </div>
+
+    <!-- POSITION SELECTOR -->
+    <div id="positionSelector" class="position-selector">
+      <div class="empty-state">Loading positions...</div>
+    </div>
+
+    <!-- ADD EMPLOYEE BUTTON -->
+    <div style="display: flex; justify-content: flex-end; margin: 20px 0 12px;">
+      <button id="addEmployeeBtn" class="add-btn">+ Add Employee</button>
+    </div>
+
+    <!-- EMPLOYEE LIST -->
+    <div id="employeeList">
+      <div class="card">
+        <div class="empty-state">Select a position above to view employees</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD EMPLOYEE MODAL ────────────────────────── -->
+  <div id="addModal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Employee</h2>
+        <button id="closeModal" class="close-btn">✕</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" id="firstName" placeholder="First name" />
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" id="lastName" placeholder="Last name" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="email@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="phone" placeholder="(555) 555-5555" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Position *</label>
+          <select id="positionSelect"></select>
+        </div>
+        <div class="form-group">
+          <label>Hire Date</label>
+          <input type="date" id="hireDate" />
+        </div>
+      </div>
+
+      <div id="modalError" class="modal-error" style="display:none;"></div>
+
+      <div class="modal-footer">
+        <button id="cancelBtn" class="cancel-btn">Cancel</button>
+        <button id="saveEmployeeBtn" class="save-btn">Save Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/employees.js"></script>
+</body>
+</html>

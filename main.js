@@ -202,6 +202,103 @@ ipcMain.handle('dashboard:manager-notes', () => {
     return obj;
   });
 });
+ipcMain.handle('employees:get-positions', () => {
+  const result = db.exec(`
+    SELECT p.id, p.title, p.color,
+      COUNT(e.id) as employee_count
+    FROM positions p
+    LEFT JOIN employees e ON e.position_id = p.id
+      AND e.status = 'Active'
+    GROUP BY p.id
+    ORDER BY p.title
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('employees:get-by-position', (event, positionId) => {
+  const result = db.exec(`
+    SELECT e.id, e.first_name, e.last_name, e.email,
+      e.phone, e.status, e.hire_date, p.title as position_title,
+      p.color as position_color,
+      COUNT(DISTINCT t.id) as tasks_completed
+    FROM employees e
+    LEFT JOIN positions p ON e.position_id = p.id
+    LEFT JOIN tasks t ON t.assigned_to = e.id
+      AND t.status = 'Done'
+    WHERE e.position_id = ? AND e.status = 'Active'
+    GROUP BY e.id
+    ORDER BY e.first_name
+  `, [positionId]);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('employees:get-all', () => {
+  const result = db.exec(`
+    SELECT e.id, e.first_name, e.last_name, e.email,
+      e.phone, e.status, e.hire_date, p.title as position_title,
+      p.color as position_color
+    FROM employees e
+    LEFT JOIN positions p ON e.position_id = p.id
+    WHERE e.status = 'Active'
+    ORDER BY e.first_name
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('employees:add', async (event, data) => {
+  try {
+    db.run(`
+      INSERT INTO employees 
+        (first_name, last_name, email, phone, position_id, hire_date, status)
+      VALUES (?, ?, ?, ?, ?, ?, 'Active')
+    `, [
+      data.first_name,
+      data.last_name,
+      data.email || null,
+      data.phone || null,
+      data.position_id,
+      data.hire_date || new Date().toISOString().split('T')[0]
+    ]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('employees:deactivate', (event, employeeId) => {
+  try {
+    db.run(
+      `UPDATE employees SET status = 'Inactive' WHERE id = ?`,
+      [employeeId]
+    );
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
 
 // ── APP SETUP ─────────────────────────────────────────
 async function createWindow() {
