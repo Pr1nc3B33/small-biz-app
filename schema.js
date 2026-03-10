@@ -50,6 +50,7 @@ async function initDatabase() {
       sku             TEXT UNIQUE,
       category        TEXT,
       quantity        INTEGER DEFAULT 0,
+      unit            TEXT DEFAULT 'units',
       low_stock_alert INTEGER DEFAULT 5,
       unit_cost       REAL,
       sale_price      REAL,

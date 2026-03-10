@@ -8,9 +8,7 @@ let db;
 let saveDb;
 
 // ── IPC HANDLERS ──────────────────────────────────────
-// Must be registered before createWindow is called
 
-// CHECK: Does any manager account exist yet?
 ipcMain.handle('auth:check-setup', async () => {
   const result = db.exec(
     `SELECT id FROM users WHERE role = 'manager' LIMIT 1`
@@ -18,7 +16,6 @@ ipcMain.handle('auth:check-setup', async () => {
   return result.length > 0 && result[0].values.length > 0;
 });
 
-// LOGIN: Verify username and password
 ipcMain.handle('auth:login', async (event, { username, password }) => {
   const result = db.exec(
     `SELECT id, username, password_hash, role, is_first_login, employee_id
@@ -26,24 +23,20 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
     [username]
   );
 
-  // No user found
   if (result.length === 0 || result[0].values.length === 0) {
     return { success: false, message: 'Invalid username or password' };
   }
 
-  // Map result columns to an object
   const cols = result[0].columns;
   const row = result[0].values[0];
   const user = {};
   cols.forEach((col, i) => user[col] = row[i]);
 
-  // Compare password with stored hash
   const passwordMatch = await bcrypt.compare(password, user.password_hash);
   if (!passwordMatch) {
     return { success: false, message: 'Invalid username or password' };
   }
 
-  // Update last_login timestamp
   db.run(
     `UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?`,
     [user.id]
@@ -62,7 +55,6 @@ ipcMain.handle('auth:login', async (event, { username, password }) => {
   };
 });
 
-// SETUP: Create first manager account (login screen only)
 ipcMain.handle('auth:create-manager', async (event, { username, password }) => {
   const existing = db.exec(
     `SELECT COUNT(*) as count FROM users WHERE role = 'manager'`
@@ -92,7 +84,6 @@ ipcMain.handle('auth:create-manager', async (event, { username, password }) => {
   }
 });
 
-// ADD MANAGER: Called from inside the app by an existing manager (max 2)
 ipcMain.handle('auth:add-manager', async (event, { username, password }) => {
   const existing = db.exec(
     `SELECT COUNT(*) as count FROM users WHERE role = 'manager'`
@@ -202,6 +193,9 @@ ipcMain.handle('dashboard:manager-notes', () => {
     return obj;
   });
 });
+
+// ── EMPLOYEE HANDLERS ─────────────────────────────────
+
 ipcMain.handle('employees:get-positions', () => {
   const result = db.exec(`
     SELECT p.id, p.title, p.color,
@@ -269,7 +263,7 @@ ipcMain.handle('employees:get-all', () => {
 ipcMain.handle('employees:add', async (event, data) => {
   try {
     db.run(`
-      INSERT INTO employees 
+      INSERT INTO employees
         (first_name, last_name, email, phone, position_id, hire_date, status)
       VALUES (?, ?, ?, ?, ?, ?, 'Active')
     `, [
@@ -293,6 +287,100 @@ ipcMain.handle('employees:deactivate', (event, employeeId) => {
       `UPDATE employees SET status = 'Inactive' WHERE id = ?`,
       [employeeId]
     );
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+// ── INVENTORY HANDLERS ────────────────────────────────
+
+ipcMain.handle('inventory:get-all', () => {
+  const result = db.exec(`
+    SELECT id, name, sku, category, quantity, unit,
+      low_stock_alert, unit_cost, sale_price, supplier, notes
+    FROM products
+    ORDER BY name
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('inventory:add-product', (event, data) => {
+  try {
+    db.run(`
+      INSERT INTO products
+        (name, sku, quantity, unit, low_stock_alert, unit_cost, sale_price, notes)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      data.name,
+      data.sku || null,
+      data.quantity || 0,
+      data.unit || 'units',
+      data.low_stock_alert || 10,
+      data.unit_cost || null,
+      data.sale_price || null,
+      data.notes || null,
+    ]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('inventory:adjust-stock', (event, { productId, adjustment, reason }) => {
+  try {
+    const current = db.exec(
+      `SELECT quantity FROM products WHERE id = ?`,
+      [productId]
+    );
+
+    if (!current.length) return { success: false, message: 'Product not found' };
+
+    const currentQty = current[0].values[0][0];
+    const newQty = currentQty + adjustment;
+
+    if (newQty < 0) {
+      return { success: false, message: 'Stock cannot go below zero' };
+    }
+
+    db.run(
+      `UPDATE products SET quantity = ? WHERE id = ?`,
+      [newQty, productId]
+    );
+
+    db.run(`
+      INSERT INTO inventory_log
+        (product_id, change_type, quantity_change, quantity_after,
+         reason, performed_by_system)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [
+      productId,
+      adjustment > 0 ? 'restock' : 'removal',
+      adjustment,
+      newQty,
+      reason || 'Manual adjustment',
+      'manual'
+    ]);
+
+    saveDb();
+    return { success: true, newQuantity: newQty };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('inventory:delete-product', (event, productId) => {
+  try {
+    db.run(`DELETE FROM products WHERE id = ?`, [productId]);
     saveDb();
     return { success: true };
   } catch (err) {

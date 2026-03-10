@@ -1,0 +1,314 @@
+/* ── SUMMARY BAR ────────────────────────────────────── */
+.summary-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-item {
+  background: #1A1F2E;
+  border: 1px solid #2D3748;
+  border-radius: 12px;
+  padding: 16px 24px;
+  min-width: 140px;
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.summary-value.warning { color: #FCD34D; }
+.summary-value.danger  { color: #FCA5A5; }
+
+.summary-label {
+  font-size: 12px;
+  color: #64748B;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── PRODUCT GRID ───────────────────────────────────── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.product-card {
+  background: #1A1F2E;
+  border: 1px solid #2D3748;
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color 0.15s;
+}
+
+.product-card:hover {
+  border-color: #3B82F6;
+}
+
+.product-card.low-stock {
+  border-color: #92400E;
+}
+
+.product-card.out-of-stock {
+  border-color: #991B1B;
+}
+
+.product-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #F1F5F9;
+  margin-bottom: 4px;
+}
+
+.product-sku {
+  font-size: 11px;
+  color: #64748B;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stock-level {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.stock-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.stock-number.warning { color: #FCD34D; }
+.stock-number.danger  { color: #FCA5A5; }
+
+.stock-unit {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.stock-bar-bg {
+  background: #0F1117;
+  border-radius: 4px;
+  height: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.stock-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.product-prices {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #64748B;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2D3748;
+}
+
+.product-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── ADD/ADJUST BUTTONS ─────────────────────────────── */
+.add-btn {
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: auto;
+}
+
+.add-btn:hover { background: #2563EB; }
+
+.action-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #2D3748;
+  color: #94A3B8;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: auto;
+  margin: 0;
+}
+
+.action-btn:hover {
+  background: #0F1117;
+  color: #F1F5F9;
+}
+
+.action-btn.danger:hover {
+  background: #450A0A;
+  border-color: #991B1B;
+  color: #FCA5A5;
+}
+
+/* ── ADJUST TYPE BUTTONS ────────────────────────────── */
+.adj-type-btn {
+  background: transparent;
+  border: 1px solid #2D3748;
+  color: #94A3B8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: auto;
+}
+
+.adj-type-btn.active {
+  background: #1E3A5F;
+  border-color: #3B82F6;
+  color: #60A5FA;
+}
+
+/* ── MODAL (reuse from employees) ───────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #1A1F2E;
+  border: 1px solid #2D3748;
+  border-radius: 16px;
+  padding: 32px;
+  width: 560px;
+  max-width: 90vw;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #F1F5F9;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #64748B;
+  font-size: 18px;
+  cursor: pointer;
+  width: auto;
+  padding: 4px 8px;
+}
+
+.close-btn:hover { color: #F1F5F9; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94A3B8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group input,
+.form-group select {
+  background: #0F1117;
+  border: 1px solid #2D3748;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #F1F5F9;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-group input:focus { border-color: #3B82F6; }
+
+.modal-error {
+  background: #450A0A;
+  border: 1px solid #991B1B;
+  color: #FCA5A5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid #2D3748;
+  color: #94A3B8;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.15s;
+}
+
+.cancel-btn:hover {
+  border-color: #94A3B8;
+  color: #F1F5F9;
+}
+
+.save-btn {
+  background: #3B82F6;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  transition: background 0.15s;
+}
+
+.save-btn:hover { background: #2563EB; }
