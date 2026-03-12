@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Schedule — Small Biz App</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/schedule.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>🏪 Small Biz App</h2>
+      <p id="currentDate"></p>
+    </div>
+
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="employees.html" class="nav-item">
+      <span class="nav-icon">👥</span> Employees
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <span class="nav-icon">📦</span> Inventory
+    </a>
+    <a href="schedule.html" class="nav-item active">
+      <span class="nav-icon">🗓️</span> Schedule
+    </a>
+    <a href="tasks.html" class="nav-item">
+      <span class="nav-icon">✅</span> Tasks
+    </a>
+
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        Signed in as <span id="usernameDisplay"></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────── -->
+  <div class="main-content">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">Schedule</h1>
+        <p class="page-subtitle" id="weekLabel">Loading...</p>
+      </div>
+      <div class="page-header-right">
+        <button class="btn-secondary" id="prevWeekBtn">← Prev</button>
+        <button class="btn-secondary" id="todayBtn">Today</button>
+        <button class="btn-secondary" id="nextWeekBtn">Next →</button>
+        <button class="btn-primary" id="addShiftBtn">+ Add Shift</button>
+      </div>
+    </div>
+
+    <!-- Weekly Calendar Grid -->
+    <div class="calendar-grid" id="calendarGrid"></div>
+
+  </div>
+
+  <!-- ── ADD SHIFT MODAL ───────────────────────────── -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add Shift</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Employee</label>
+          <select id="employeeSelect">
+            <option value="">Select employee...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="shiftDate" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Time</label>
+            <input type="time" id="startTime" />
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <input type="time" id="endTime" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Position</label>
+          <input type="text" id="shiftPosition" placeholder="e.g. Cashier, Manager..." />
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <input type="text" id="shiftNotes" placeholder="Optional notes..." />
+        </div>
+        <div class="error-msg" id="modalError"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelBtn">Cancel</button>
+        <button class="btn-primary" id="saveShiftBtn">Save Shift</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/schedule.js"></script>
+</body>
+</html>

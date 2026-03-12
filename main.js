@@ -7,7 +7,7 @@ let mainWindow;
 let db;
 let saveDb;
 
-// ── IPC HANDLERS ──────────────────────────────────────
+// ── AUTH HANDLERS ─────────────────────────────────────
 
 ipcMain.handle('auth:check-setup', async () => {
   const result = db.exec(
@@ -388,7 +388,75 @@ ipcMain.handle('inventory:delete-product', (event, productId) => {
   }
 });
 
+// ── SCHEDULE HANDLERS ─────────────────────────────────
+
+ipcMain.handle('schedule:get-week', async (event, { startDate }) => {
+  try {
+    const result = db.exec(`
+      SELECT
+        s.id,
+        s.date,
+        s.start_time,
+        s.end_time,
+        s.position,
+        s.status,
+        s.notes,
+        e.first_name,
+        e.last_name
+      FROM shifts s
+      JOIN employees e ON s.employee_id = e.id
+      WHERE s.date >= ? AND s.date < date(?, '+7 days')
+      ORDER BY s.date, s.start_time
+    `, [startDate, startDate]);
+
+    if (!result.length) return { success: true, shifts: [] };
+
+    const cols = result[0].columns;
+    const shifts = result[0].values.map(row => {
+      const obj = {};
+      cols.forEach((col, i) => obj[col] = row[i]);
+      return obj;
+    });
+
+    return { success: true, shifts };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('schedule:add-shift', async (event, shiftData) => {
+  try {
+    db.run(`
+      INSERT INTO shifts (employee_id, date, start_time, end_time, position, status, notes)
+      VALUES (?, ?, ?, ?, ?, 'Scheduled', ?)
+    `, [
+      shiftData.employee_id,
+      shiftData.date,
+      shiftData.start_time,
+      shiftData.end_time,
+      shiftData.position,
+      shiftData.notes || ''
+    ]);
+
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
+ipcMain.handle('schedule:delete-shift', async (event, { id }) => {
+  try {
+    db.run(`DELETE FROM shifts WHERE id = ?`, [id]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+});
+
 // ── APP SETUP ─────────────────────────────────────────
+
 async function createWindow() {
   const result = await initDatabase();
   db = result.db;
