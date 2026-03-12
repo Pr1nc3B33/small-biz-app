@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tasks — Small Biz App</title>
+  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="css/tasks.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>🏪 Small Biz App</h2>
+      <p id="currentDate"></p>
+    </div>
+
+    <a href="dashboard.html" class="nav-item">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="employees.html" class="nav-item">
+      <span class="nav-icon">👥</span> Employees
+    </a>
+    <a href="inventory.html" class="nav-item">
+      <span class="nav-icon">📦</span> Inventory
+    </a>
+    <a href="schedule.html" class="nav-item">
+      <span class="nav-icon">🗓️</span> Schedule
+    </a>
+    <a href="tasks.html" class="nav-item active">
+      <span class="nav-icon">✅</span> Tasks
+    </a>
+
+    <div class="sidebar-bottom">
+      <div class="user-info">
+        Signed in as <span id="usernameDisplay"></span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────── -->
+  <div class="main-content">
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Tasks</h1>
+        <p class="page-subtitle" id="taskSummary">Loading...</p>
+      </div>
+      <button class="btn-primary" id="addTaskBtn">+ Add Task</button>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+
+      <div class="kanban-column" id="col-Pending">
+        <div class="kanban-header">
+          <span class="kanban-title">To Do</span>
+          <span class="kanban-count badge badge-gray" id="count-Pending">0</span>
+        </div>
+        <div class="kanban-cards" id="cards-Pending"></div>
+      </div>
+
+      <div class="kanban-column" id="col-In Progress">
+        <div class="kanban-header">
+          <span class="kanban-title">In Progress</span>
+          <span class="kanban-count badge badge-blue" id="count-In Progress">0</span>
+        </div>
+        <div class="kanban-cards" id="cards-In Progress"></div>
+      </div>
+
+      <div class="kanban-column" id="col-Done">
+        <div class="kanban-header">
+          <span class="kanban-title">Done</span>
+          <span class="kanban-count badge badge-green" id="count-Done">0</span>
+        </div>
+        <div class="kanban-cards" id="cards-Done"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ADD TASK MODAL ────────────────────────────── -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add Task</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="taskTitle" placeholder="What needs to be done?" />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="taskDescription" placeholder="Optional details..." />
+        </div>
+        <div class="form-group">
+          <label>Assign To</label>
+          <select id="taskEmployee">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="taskDueDate" />
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="taskPriority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="error-msg" id="modalError"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelBtn">Cancel</button>
+        <button class="btn-primary" id="saveTaskBtn">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/shared.js"></script>
+  <script src="js/tasks.js"></script>
+</body>
+</html>

@@ -454,7 +454,69 @@ ipcMain.handle('schedule:delete-shift', async (event, { id }) => {
     return { success: false, error: err.message };
   }
 });
+// ── TASKS HANDLERS ───────────────────────────────────
 
+ipcMain.handle('tasks:get-all', () => {
+  const result = db.exec(`
+    SELECT t.id, t.title, t.description, t.due_date,
+      t.status, t.priority, t.created_at,
+      e.first_name, e.last_name
+    FROM tasks t
+    LEFT JOIN employees e ON t.assigned_to = e.id
+    ORDER BY t.created_at DESC
+  `);
+
+  if (!result.length) return [];
+  const cols = result[0].columns;
+  return result[0].values.map(row => {
+    const obj = {};
+    cols.forEach((col, i) => obj[col] = row[i]);
+    return obj;
+  });
+});
+
+ipcMain.handle('tasks:add', (event, data) => {
+  try {
+    db.run(`
+      INSERT INTO tasks (title, description, assigned_to, due_date, status, priority)
+      VALUES (?, ?, ?, ?, 'Pending', ?)
+    `, [
+      data.title,
+      data.description || null,
+      data.assigned_to || null,
+      data.due_date || null,
+      data.priority || 'Medium'
+    ]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('tasks:update-status', (event, { id, status }) => {
+  try {
+    const completedAt = status === 'Done' ? "CURRENT_TIMESTAMP" : "NULL";
+    db.run(
+      `UPDATE tasks SET status = ?, completed_at = ${completedAt}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      [status, id]
+    );
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('tasks:delete', (event, id) => {
+  try {
+    db.run(`DELETE FROM tasks WHERE id = ?`, [id]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
 // ── APP SETUP ─────────────────────────────────────────
 
 async function createWindow() {
