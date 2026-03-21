@@ -657,7 +657,7 @@ async function createWindow() {
       contextIsolation: false,
     },
     titleBarStyle: 'hiddenInset',
-    title: 'Small Biz App',
+    title: '3V-1',
   });
 
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));

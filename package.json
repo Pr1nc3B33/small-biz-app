@@ -1,8 +1,7 @@
 {
-  "name": "small-biz-app",
-  "version": "1.0.0",
-  "description": "Small business inventory, scheduling and task manager",
-  "main": "main.js",
+  "name": "3v-1",
+  "productName": "3V-1",
+  "description": "3-in-1 business management app",
   "scripts": {
     "start": "electron ."
   },
