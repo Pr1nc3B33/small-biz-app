@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Small Biz App - Employee Portal</title>
+	<link rel="stylesheet" href="css/employee-portal.css" />
+</head>
+<body>
+	<main class="portal-shell">
+		<header class="portal-header">
+			<h1 id="welcomeHeading">My Schedule</h1>
+			<button id="signOutBtn" type="button">Sign Out</button>
+		</header>
+
+		<div class="portal-grid">
+			<section class="panel">
+				<h2>Upcoming Shifts</h2>
+				<div id="scheduleList" class="list"></div>
+			</section>
+
+			<section class="panel">
+				<h2>Role Schedule</h2>
+				<div id="roleScheduleList" class="list"></div>
+			</section>
+
+			<section class="panel">
+				<h2>My Tasks</h2>
+				<div id="taskList" class="list"></div>
+			</section>
+
+			<section class="panel">
+				<h2>Swap Requests</h2>
+				<div id="swapList" class="list"></div>
+			</section>
+
+			<section class="panel">
+				<h2>Announcements</h2>
+				<div id="announcementList" class="list"></div>
+			</section>
+		</div>
+	</main>
+
+	<script src="js/employee-portal.js"></script>
+</body>
+</html>

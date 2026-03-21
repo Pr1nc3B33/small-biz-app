@@ -1,5 +1,4 @@
-const { ipcRenderer: ipc } = require('electron');
-
+const { ipcRenderer } = require('electron');
 let selectedPositionId = null;
 let allPositions = [];
 
@@ -102,6 +101,10 @@ async function loadEmployees(positionId) {
             <button class="action-btn danger" onclick="deactivateEmployee(${emp.id}, '${emp.first_name}')">
               🚫 Deactivate
             </button>
+            <button class="action-btn" onclick="setEmployeePassword(${emp.id}, '${emp.first_name}')">
+              🔑 Set Password
+            </button>
+          </div>
           </div>
         </div>
       `).join('')}
@@ -207,7 +210,6 @@ async function deactivateEmployee(id, name) {
     if (selectedPositionId) selectPosition(selectedPositionId);
   }
 }
-
 // ── EDIT (placeholder) ────────────────────────────────
 function editEmployee(id) {
   alert(`Edit employee ${id} — coming soon!`);
@@ -221,5 +223,19 @@ function formatDate(dateStr) {
     year: 'numeric'
   });
 }
+async function setEmployeePassword(id, name) {
+  const password = prompt(`Set portal password for ${name}:`);
+  if (!password) return;
 
+  const result = await ipcRenderer.invoke('employee:set-password', {
+    employeeId: id,
+    password
+  });
+
+  if (result.success) {
+    alert(`Password set for ${name} successfully!`);
+  } else {
+    alert(`Failed: ${result.message}`);
+  }
+}
 init();

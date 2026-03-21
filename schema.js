@@ -113,6 +113,25 @@ async function initDatabase() {
       FOREIGN KEY (employee_id) REFERENCES employees(id)
     )
   `);
+  db.run(`
+  CREATE TABLE IF NOT EXISTS shift_swap_requests (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_shift_id       INTEGER NOT NULL,
+    to_shift_id         INTEGER NOT NULL,
+    requested_by        INTEGER NOT NULL,
+    target_employee_id  INTEGER NOT NULL,
+    reason              TEXT,
+    status              TEXT DEFAULT 'Pending',
+    responded_by        INTEGER,
+    responded_at        DATETIME,
+    created_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (from_shift_id)      REFERENCES shifts(id),
+    FOREIGN KEY (to_shift_id)        REFERENCES shifts(id),
+    FOREIGN KEY (requested_by)       REFERENCES employees(id),
+    FOREIGN KEY (target_employee_id) REFERENCES employees(id),
+    FOREIGN KEY (responded_by)       REFERENCES employees(id)
+  )
+`);
 
   // ── TASKS ───────────────────────────────────────────
   db.run(`

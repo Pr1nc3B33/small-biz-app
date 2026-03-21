@@ -2,44 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Small Biz App — Login</title>
+  <title>Small Biz App - Choose Role</title>
   <link rel="stylesheet" href="css/login.css" />
 </head>
 <body>
   <div class="login-box">
     <div class="logo">
       <h1>🏪 Small Biz App</h1>
-      <p>Sign in to your account</p>
+      <p>Select how you want to sign in</p>
     </div>
 
-    <div class="error" id="errorMsg"></div>
-
-    <div class="form-group">
-      <label>Username</label>
-      <input 
-        type="text" 
-        id="username" 
-        placeholder="Enter your username"
-        autocomplete="off"
-      />
-    </div>
-
-    <div class="form-group">
-      <label>Password</label>
-      <input 
-        type="password" 
-        id="password" 
-        placeholder="Enter your password"
-      />
-    </div>
-
-    <button id="loginBtn">Sign In</button>
-
-    <div class="setup-link">
-      First time? <a id="setupLink">Create manager account</a>
-    </div>
+    <button type="button" onclick="window.location.href='manager-login.html'">Manager Sign In</button>
+    <button type="button" onclick="window.location.href='employee-login.html'">Employee Sign In</button>
   </div>
-
-  <script src="js/login.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>
