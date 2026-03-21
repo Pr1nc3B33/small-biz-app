@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Small Biz App - Tickets</title>
+    <link rel="stylesheet" href="css/shared.css" />
+    <link rel="stylesheet" href="css/tickets.css" />
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🏪 Small Biz App</h2>
+            <p id="currentDate"></p>
+        </div>
+
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a href="employees.html" class="nav-item">
+            <span class="nav-icon">👥</span> Employees
+        </a>
+        <a href="inventory.html" class="nav-item">
+            <span class="nav-icon">📦</span> Inventory
+        </a>
+        <a href="schedule.html" class="nav-item">
+            <span class="nav-icon">🗓️</span> Schedule
+        </a>
+        <a href="tasks.html" class="nav-item">
+            <span class="nav-icon">✅</span> Tasks
+        </a>
+        <a href="tickets.html" class="nav-item active">
+            <span class="nav-icon">🎫</span> Tickets
+        </a>
+
+        <div class="sidebar-bottom">
+            <div class="user-info">
+                Signed in as <span id="usernameDisplay"></span>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Tickets</h1>
+                <p class="page-subtitle">Track customer issues, requests, and follow-ups in one place.</p>
+            </div>
+            <button class="btn-primary" id="createTicketBtn">+ Create Ticket</button>
+        </div>
+
+        <div class="ticket-toolbar card">
+            <div class="filter-group" id="ticketFilters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="open">Open</button>
+                <button class="filter-btn" data-filter="in-progress">In Progress</button>
+                <button class="filter-btn" data-filter="resolved">Resolved</button>
+            </div>
+            <div class="toolbar-summary" id="ticketCount">0 tickets</div>
+        </div>
+
+        <div class="ticket-list card">
+            <div class="ticket-list-header">
+                <span class="card-title">Ticket List</span>
+            </div>
+            <div id="ticketList" class="ticket-list-body"></div>
+        </div>
+    </div>
+
+<div class="modal-overlay" id="createTicketModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Ticket</h2>
+                <button class="modal-close" id="closeCreateModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ticketTitle">Title</label>
+                    <input type="text" id="ticketTitle" placeholder="Brief description of the issue" />
+                </div>
+                <div class="form-group">
+                    <label for="ticketCategory">Category</label>
+                    <select id="ticketCategory" title="Ticket category">
+                        <option value="Customer Complaint">Customer Complaint</option>
+                        <option value="Maintenance Request">Maintenance Request</option>
+                        <option value="Employee Task">Employee Task</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketPriority">Priority</label>
+                    <select id="ticketPriority" title="Ticket priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ticketDescription">Description</label>
+                    <textarea id="ticketDescription" rows="4" placeholder="Detailed description..."></textarea>
+                </div>
+                <div class="error-msg" id="createTicketError"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelCreateBtn">Cancel</button>
+                <button class="btn-primary" id="submitTicketBtn">Create Ticket</button>
+            </div>
+        </div>
+    </div>
+
+<div class="modal-overlay" id="ticketDetailModal" style="display:none;">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <div>
+                    <h2 id="detailTicketTitle">Ticket Details</h2>
+                    <p class="detail-subtitle" id="detailTicketMeta">Loading ticket information...</p>
+                </div>
+                <button class="modal-close" id="closeDetailModal">✕</button>
+            </div>
+            <div class="modal-body detail-grid">
+                <div class="detail-section">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value" id="detailCategory">-</div>
+                </div>
+                <div class="detail-section">
+                    <div class="detail-label">Priority</div>
+                    <div class="detail-value" id="detailPriority">-</div>
+                </div>
+                <div class="detail-section detail-section-wide">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-status-row">
+                        <div class="detail-value" id="detailStatus">-</div>
+                        <div class="status-actions" id="statusActions">
+                            <button class="status-action-btn" data-status="Open">Open</button>
+                            <button class="status-action-btn" data-status="In Progress">In Progress</button>
+                            <button class="status-action-btn" data-status="Resolved">Resolved</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section detail-section-wide">
+                    <label class="detail-label" for="detailAssignee">Assign To Employee</label>
+                    <select id="detailAssignee">
+                        <option value="">Unassigned</option>
+                    </select>
+                </div>
+                <div class="detail-section detail-section-wide">
+                    <div class="detail-label">Notes History</div>
+                    <div class="notes-history" id="notesHistory"></div>
+                </div>
+                <div class="detail-section detail-section-wide">
+                    <label class="detail-label" for="detailNoteInput">Add Note</label>
+                    <textarea id="detailNoteInput" rows="4" placeholder="Add a note for this ticket..."></textarea>
+                    <div class="error-msg" id="detailNoteError"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeDetailBtn">Close</button>
+                <button class="btn-primary" id="addNoteBtn">Add Note</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/tickets.js"></script>
+
+</body>
+</html>

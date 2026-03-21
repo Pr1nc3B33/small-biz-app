@@ -150,26 +150,6 @@ async function initDatabase() {
     )
   `);
 
-  // ── TICKETS ─────────────────────────────────────────
-  db.run(`
-    CREATE TABLE IF NOT EXISTS tickets (
-      id              INTEGER PRIMARY KEY AUTOINCREMENT,
-      created_by      INTEGER NOT NULL,
-      ticket_type     TEXT NOT NULL,
-      title           TEXT NOT NULL,
-      description     TEXT,
-      status          TEXT DEFAULT 'Pending',
-      priority        TEXT DEFAULT 'Normal',
-      reviewed_by     INTEGER,
-      manager_notes   TEXT,
-      resolved_at     DATETIME,
-      created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (created_by)  REFERENCES employees(id),
-      FOREIGN KEY (reviewed_by) REFERENCES users(id)
-    )
-  `);
-
   // ── NOTIFICATIONS ───────────────────────────────────
   db.run(`
     CREATE TABLE IF NOT EXISTS notifications (
@@ -199,12 +179,39 @@ async function initDatabase() {
       FOREIGN KEY (created_by) REFERENCES users(id)
     )
   `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS tickets (
+      id              INTEGER PRIMARY KEY AUTOINCREMENT,
+      title           TEXT NOT NULL,
+      description     TEXT,
+      category        TEXT NOT NULL,
+      priority        TEXT DEFAULT 'Medium',
+      status          TEXT DEFAULT 'Open',
+      created_by      INTEGER,
+      assigned_to     INTEGER,
+      created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES employees(id),
+      FOREIGN KEY (assigned_to) REFERENCES employees(id)
+    )
+  `);
+  db.run(`
+  CREATE TABLE IF NOT EXISTS ticket_notes (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  ticket_id   INTEGER NOT NULL,
+  author_id   INTEGER,
+  note        TEXT NOT NULL,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (ticket_id) REFERENCES tickets(id),
+  FOREIGN KEY (author_id) REFERENCES employees(id)
+)
+  `);
 
-  // Save to disk after all tables created
   saveDb();
   console.log('✅ Database and all 10 tables created successfully!');
 
   return { db, saveDb };
 }
+
 
 module.exports = initDatabase;

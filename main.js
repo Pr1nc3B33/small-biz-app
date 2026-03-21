@@ -540,6 +540,132 @@ async function createWindow() {
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 }
 
+ipcMain.handle('tickets:get-all', (event) => {
+  try {
+    const result = db.exec(`
+      SELECT t.id, t.title, t.description, t.category,
+        t.status, t.priority, t.created_at, t.updated_at,
+        e1.first_name || ' ' || e1.last_name AS created_by_name,
+        e2.first_name || ' ' || e2.last_name AS assigned_to_name
+      FROM tickets t
+      LEFT JOIN employees e1 ON t.created_by = e1.id
+      LEFT JOIN employees e2 ON t.assigned_to = e2.id
+      ORDER BY t.created_at DESC
+    `);
+
+    if (!result.length) return { success: true, tickets: [] };
+    const cols = result[0].columns;
+    const tickets = result[0].values.map(row => {
+      const obj = {};
+      cols.forEach((col, i) => obj[col] = row[i]);
+      return obj;
+    });
+    return { success: true, tickets };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('tickets:create', (event, data) => {
+  try {
+    db.run(`
+      INSERT INTO tickets (title, description, category, priority, created_by)
+      VALUES (?, ?, ?, ?, ?)
+    `, [
+      data.title,
+      data.description || null,
+      data.category,
+      data.priority || 'Medium',
+      data.created_by
+    ]);
+    saveDb();
+    return { success: true };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+ipcMain.handle('tickets:get-by-id', (event, id) => {
+  try {
+    const result = db.exec(`
+      SELECT t.id, t.title, t.description, t.category,
+        t.status, t.priority, t.created_at, t.updated_at,
+        e1.first_name || ' ' || e1.last_name AS created_by_name,
+        e2.first_name || ' ' || e2.last_name AS assigned_to_name,
+        t.assigned_to
+      FROM tickets t
+      LEFT JOIN employees e1 ON t.created_by = e1.id
+      LEFT JOIN employees e2 ON t.assigned_to = e2.id
+      WHERE t.id = ?
+    `, [id]);
+
+    if (!result.length || !result[0].values.length) {
+      return { success: false, message: 'Ticket not found' };
+    }
+
+    const cols = result[0].columns;
+    const ticket = {};
+    cols.forEach((col, i) => ticket[col] = result[0].values[0][i]); 
+    const notesResult = db.exec(`
+      SELECT n.id, n.note, n.created_at,
+        e.first_name || ' ' || e.last_name AS author_name
+      FROM ticket_notes n
+      LEFT JOIN employees e ON n.author_id = e.id
+      WHERE n.ticket_id = ?
+      ORDER BY n.created_at ASC
+    `, [id]);
+
+    const notes = !notesResult.length ? [] : notesResult[0].values.map(row => {
+      const obj = {};
+      notesResult[0].columns.forEach((col, i) => obj[col] = row[i]);
+      return obj;
+    });
+
+    return { success: true, ticket, notes };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+});
+
+  ipcMain.handle('tickets:update-status', (event, { id, status }) => {
+    try {
+      db.run(
+        `UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [status, id]
+      );
+      saveDb();
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }); 
+  ipcMain.handle('tickets:assign', (event, { id, employeeId }) => {
+    try {
+      db.run(
+        `UPDATE tickets SET assigned_to = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        [employeeId, id]
+      );
+      saveDb();
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  });
+  ipcMain.handle('tickets:add-note', (event, { ticketId, authorId, note }) => {
+    try {
+      db.run(`
+        INSERT INTO ticket_notes (ticket_id, author_id, note)
+        VALUES (?, ?, ?)
+      `, [ticketId, authorId, note]);
+      saveDb();
+      return { success: true };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  });
+
+
+
 app.whenReady().then(() => {
   createWindow();
 
