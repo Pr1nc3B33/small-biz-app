@@ -76,7 +76,6 @@ setupLink.addEventListener('click', async () => {
 
   // Account created — hide the error and confirm
   hideError();
-  console.log('Manager account created successfully!');
   showError('✅ Manager account created! You can now sign in.');
   errorMsg.style.background = '#064E3B';
   errorMsg.style.borderColor = '#065F46';
